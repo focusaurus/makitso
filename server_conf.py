@@ -32,5 +32,5 @@ class ServerTask(Task):
         self.name = name
 
     def run(self):
-        conf = getServerConf()[self.name]
-        env.hosts.append(conf["hostname"])
+        env.server = getServerConf()[self.name]
+        env.hosts.append(env.server["hostname"])

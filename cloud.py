@@ -15,10 +15,12 @@ import requests
 import util
 
 API_KEY = None
+USERNAME = None
 
 
 def cloudConnect():
     global API_KEY
+    global USERNAME
     certPath = os.path.join("python", "cacert.pem")
     if not os.path.exists(certPath):
         out("Installing CA Certificates for Cloud APIs")
@@ -29,10 +31,12 @@ def cloudConnect():
             certFile.write(request.content)
     libcloud.security.VERIFY_SSL_CERT = True
     libcloud.security.CA_CERTS_PATH.append(certPath)
+    if not USERNAME:
+        USERNAME = raw_input("RackSpace Username: ")
     if not API_KEY:
         API_KEY = getpass.getpass("RackSpace API Key: ")
     Driver = get_driver(Provider.RACKSPACE)
-    return Driver("focusaurus", API_KEY)
+    return Driver(USERNAME, API_KEY)
 
 
 def chooseCloudOption(listFunc, regex, name):

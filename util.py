@@ -55,3 +55,30 @@ def script(text, run=run):
     put(StringIO(text), tempPath, mode=500)
     run(tempPath)
     run("rm '%(tempPath)s'" % locals())
+
+
+def permissions(owner, fileMode=440, dirMode=550):
+    return """chown -R %(owner)s .
+chmod -R %(fileMode)s .
+find . -type d -print0 | xargs -0 chmod %(dirMode)s
+""" % locals()
+
+
+#http://www.5dollarwhitebox.org/drupal/node/84
+def humanizeBytes(bytes):
+    bytes = float(bytes)
+    if bytes >= 1024 ** 4:
+        terabytes = bytes / 1024 ** 4
+        size = '%.2f TB' % terabytes
+    elif bytes >= 1024 ** 3:
+        gigabytes = bytes / 1024 ** 3
+        size = '%.2f GB' % gigabytes
+    elif bytes >= 1024 ** 2:
+        megabytes = bytes / 1024 ** 2
+        size = '%d MB' % megabytes
+    elif bytes >= 1024:
+        kilobytes = bytes / 1024
+        size = '%d KB' % kilobytes
+    else:
+        size = '%d b' % bytes
+    return size

@@ -2,7 +2,7 @@
 #This is our small wrapper script for our Fabric fabfile.py
 #It allows us to bootstrap our prerequisites automatically
 #This enables a developer to just clone the git repo, read the README.md
-#and start issuing "do" commands without futzing with manual prerequisite 
+#and start issuing "do" commands without futzing with manual prerequisite
 #installation too much
 
 cd $(dirname "${0}")

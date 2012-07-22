@@ -3,7 +3,7 @@ import string
 
 
 def makeUserScript(login, sshKey=None):
-    template = """adduser --disabled-password --quiet --gecos '' --home /home/${login} --shell /bin/zsh ${login}
+    template = """adduser --disabled-password --quiet --gecos '' --home /home/${login} ${login}
 addgroup ${login} sudo
 """
     if sshKey:

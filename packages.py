@@ -1,4 +1,5 @@
 from fabric.api import sudo
+import types
 
 
 def easyInstall(packages):
@@ -6,4 +7,6 @@ def easyInstall(packages):
 
 
 def apt(packages):
-    sudo("""apt-get update && apt-get install --yes %s""" % " ".join(packages))
+    if type(packages) in types.StringTypes:
+        packages = (packages,)
+    sudo("""apt-get --quiet --quiet update && apt-get --quiet --yes install %s""" % " ".join(packages))
