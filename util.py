@@ -4,7 +4,7 @@ import os
 import re
 import sys
 import time
-from StringIO import StringIO
+from io import StringIO
 
 from fabric.api import put
 from fabric.api import run
@@ -36,9 +36,13 @@ def exit(message, exitCode=0):
     sys.exit(exitCode)
 
 
-def printJSON(obj, indent=2):
+def prettyJSON(obj, indent=2):
     pretty = json.dumps(obj, sort_keys=True, indent=indent)
-    pretty = TRAILING_WHITESPACE.sub("", pretty)
+    return TRAILING_WHITESPACE.sub("", pretty)
+
+
+def printJSON(obj, indent=2):
+    pretty = prettyJSON(obj, indent)
     print(pretty)
     return pretty
 
@@ -50,9 +54,11 @@ def getSSHKey(keyPath="~/.ssh/id_rsa.pub"):
             return inFile.read()
 
 
-def script(text, run=run):
+def script(text, run=run, name=None):
     tempPath = "./fabric_script_%s.sh" % time.strftime("%Y%m%d.%H%M%S")
-    put(StringIO(text), tempPath, mode=500)
+    scriptIO = StringIO(unicode(text))
+    scriptIO.name = name or tempPath
+    put(scriptIO, tempPath, mode=500)
     run(tempPath)
     run("rm '%(tempPath)s'" % locals())
 
