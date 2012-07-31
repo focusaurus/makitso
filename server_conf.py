@@ -41,7 +41,6 @@ def serverTask(name):
         env.server = getServerConf()[name]
         env.server["label"] = name
         env.hosts.append(env.server["hostname"])
-        print("SERVER:", name)
     serverTask.__name__ = str(name)
     serverTask.__doc__ = "Deploy to {}".format(name)
     return task(serverTask)
