@@ -1,5 +1,5 @@
 from fabric.api import env
-from fabric.tasks import Task
+from fabric.api import task
 from util import printJSON
 import copy
 import json
@@ -36,13 +36,12 @@ def getServerProperty(name, property):
     return value
 
 
-class ServerTask(Task):
-    "This is a named target server pseudo-command"
-
-    def __init__(self, name):
-        self.name = name
-
-    def run(self):
-        env.server = getServerConf()[self.name]
-        env.server["label"] = self.name
+def serverTask(name):
+    def serverTask():
+        env.server = getServerConf()[name]
+        env.server["label"] = name
         env.hosts.append(env.server["hostname"])
+        print("SERVER:", name)
+    serverTask.__name__ = str(name)
+    serverTask.__doc__ = "Deploy to {}".format(name)
+    return task(serverTask)
