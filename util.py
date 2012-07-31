@@ -19,8 +19,9 @@ def error(message):
     sys.stderr.write(str(message) + "\n")
 
 
-def out(message):
-    sys.stdout.write(str(message) + "\n")
+def out(*messages):
+    message = " ".join([str(m) for m in messages])
+    sys.stdout.write(message + "\n")
 
 
 def dot(sleepTime=10):
