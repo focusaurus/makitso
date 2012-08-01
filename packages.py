@@ -1,5 +1,6 @@
-from fabric.api import sudo
 import types
+
+from fabric.api import sudo
 
 
 def easy_install(packages):

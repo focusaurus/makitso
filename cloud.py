@@ -1,4 +1,6 @@
 """Cloud server manipulation"""
+import getpass
+import os
 
 from fabric.api import task
 from libcloud.compute.providers import get_driver
@@ -9,9 +11,7 @@ from makitso.util import EC_NETWORK
 from makitso.util import EC_SERVICE
 from makitso.util import exit
 from makitso.util import out
-import getpass
 import libcloud.security
-import os
 import requests
 
 API_KEY = None

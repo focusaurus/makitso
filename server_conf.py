@@ -1,8 +1,10 @@
+import copy
+import json
+
 from fabric.api import env
 from fabric.api import task
 from makitso.util import pretty_json
-import copy
-import json
+
 
 SERVER_CONF_PATH = "servers.json"
 server_conf = None

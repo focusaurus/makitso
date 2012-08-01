@@ -1,4 +1,3 @@
-import fabric.utils
 import json
 import os
 import re
@@ -8,6 +7,7 @@ from io import StringIO
 
 from fabric.api import put
 from fabric.api import run
+import fabric.utils
 
 EC_NETWORK = 10
 EC_SERVICE = 20
