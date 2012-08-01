@@ -5,17 +5,17 @@ import copy
 import json
 
 SERVER_CONF_PATH = "servers.json"
-serverConf = None
+server_conf = None
 
 
 ########## server configuration ##########
 def read(path=SERVER_CONF_PATH):
-    global serverConf
-    if serverConf:
-        return serverConf
-    with open(path) as confFile:
-        serverConf = json.load(confFile)
-    return serverConf
+    global server_conf
+    if server_conf:
+        return server_conf
+    with open(path) as conf_file:
+        server_conf = json.load(conf_file)
+    return server_conf
 
 
 def write(conf, path=SERVER_CONF_PATH):
@@ -23,16 +23,16 @@ def write(conf, path=SERVER_CONF_PATH):
     for key, value in conf.iteritems():
         if "label" in conf[key]:
             del(conf[key]["label"])
-    with open(path, "wb") as confFile:
-        confFile.write(pretty_json(conf))
+    with open(path, "wb") as conf_file:
+        conf_file.write(pretty_json(conf))
 
 
 def get_property(name, property):
-    serverConf = read()
-    value = serverConf.get(name, {}).get(property)
+    server_conf = read()
+    value = server_conf.get(name, {}).get(property)
     if value is None:
-        exit("Could not find server {name} in {confPath}".format(
-            name=name, confPath=SERVER_CONF_PATH))
+        exit("Could not find server {name} in {conf_path}".format(
+            name=name, conf_path=SERVER_CONF_PATH))
     return value
 
 

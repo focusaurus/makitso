@@ -21,16 +21,16 @@ USERNAME = None
 def cloud_connect():
     global API_KEY
     global USERNAME
-    certPath = os.path.join("python", "cacert.pem")
-    if not os.path.exists(certPath):
+    cert_path = os.path.join("python", "cacert.pem")
+    if not os.path.exists(cert_path):
         out("Installing CA Certificates for Cloud APIs")
         request = requests.get("http://curl.haxx.se/ca/cacert.pem")
         if request.status_code > 299:
             exit("Could not download CA Certs from %s", EC_NETWORK)
-        with open(certPath, "wb") as certFile:
-            certFile.write(request.content)
+        with open(cert_path, "wb") as cert_file:
+            cert_file.write(request.content)
     libcloud.security.VERIFY_SSL_CERT = True
-    libcloud.security.CA_CERTS_PATH.append(certPath)
+    libcloud.security.CA_CERTS_PATH.append(cert_path)
     if not USERNAME:
         USERNAME = raw_input("RackSpace Username: ")
     if not API_KEY:

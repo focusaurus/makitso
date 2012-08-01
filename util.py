@@ -24,17 +24,17 @@ def out(*messages):
     sys.stdout.write(message + "\n")
 
 
-def dot(sleepTime=10):
+def dot(sleep_time=10):
     fabric.utils.fastprint(".")
-    time.sleep(sleepTime)
+    time.sleep(sleep_time)
 
 
-def exit(message, exitCode=0):
-    if exitCode == 0:
+def exit(message, exit_code=0):
+    if exit_code == 0:
         out(message)
     else:
         error(message)
-    sys.exit(exitCode)
+    sys.exit(exit_code)
 
 
 def pretty_json(obj, indent=2):
@@ -48,26 +48,26 @@ def print_json(obj, indent=2):
     return pretty
 
 
-def get_ssh_key(keyPath="~/.ssh/id_rsa.pub"):
-    keyPath = os.path.expanduser(keyPath)
-    if os.path.exists(keyPath) and not os.path.isdir(keyPath):
-        with open(keyPath) as inFile:
-            return inFile.read()
+def get_ssh_key(key_path="~/.ssh/id_rsa.pub"):
+    key_path = os.path.expanduser(key_path)
+    if os.path.exists(key_path) and not os.path.isdir(key_path):
+        with open(key_path) as in_file:
+            return in_file.read()
 
 
 def script(text, run=run, name=None):
-    tempPath = "./fabric_script_%s.sh" % time.strftime("%Y%m%d.%H%M%S")
-    scriptIO = StringIO(unicode(text))
-    scriptIO.name = name or tempPath
-    put(scriptIO, tempPath, mode=500)
-    run(tempPath)
-    run("rm '%(tempPath)s'" % locals())
+    temp_path = "./fabric_script_%s.sh" % time.strftime("%Y%m%d.%H%M%S")
+    script_io = StringIO(unicode(text))
+    script_io.name = name or temp_path
+    put(script_io, temp_path, mode=500)
+    run(temp_path)
+    run("rm '%(temp_path)s'" % locals())
 
 
-def permissions(owner, fileMode=440, dirMode=550):
+def permissions(owner, file_mode=440, dir_mode=550):
     return """chown -R %(owner)s .
-chmod -R %(fileMode)s .
-find . -type d -print0 | xargs -0 chmod %(dirMode)s
+chmod -R %(file_mode)s .
+find . -type d -print0 | xargs -0 chmod %(dir_mode)s
 """ % locals()
 
 

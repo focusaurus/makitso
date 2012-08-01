@@ -9,4 +9,5 @@ def easy_install(packages):
 def apt(packages):
     if type(packages) in types.StringTypes:
         packages = (packages,)
-    sudo("""apt-get --quiet --quiet update && apt-get --quiet --yes install %s""" % " ".join(packages))
+    sudo("apt-get --quiet --quiet update && "
+        "apt-get --quiet --yes install %s" % " ".join(packages))
