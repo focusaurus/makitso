@@ -2,7 +2,7 @@ from fabric.api import sudo
 import types
 
 
-def easyInstall(packages):
+def easy_install(packages):
     sudo("easy_install %s" % " ".join(packages))
 
 

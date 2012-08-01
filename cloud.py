@@ -18,7 +18,7 @@ API_KEY = None
 USERNAME = None
 
 
-def cloudConnect():
+def cloud_connect():
     global API_KEY
     global USERNAME
     certPath = os.path.join("python", "cacert.pem")
@@ -39,7 +39,7 @@ def cloudConnect():
     return Driver(USERNAME, API_KEY)
 
 
-def chooseCloudOption(listFunc, regex, name):
+def choose_cloud_option(listFunc, regex, name):
     item = [o for o in listFunc() if regex.match(o.name)]
     if len(item) != 1:
         exit("Could not find exactly one %s matching %s" %
@@ -47,8 +47,8 @@ def chooseCloudOption(listFunc, regex, name):
     return item[0]
 
 
-def getNode(uuid, exit=True):
-    conn = cloudConnect()
+def get_node(uuid, exit=True):
+    conn = cloud_connect()
     matches = [node for node in conn.list_nodes() if node.uuid == uuid]
     if len(matches) == 1:
         return matches[0]
@@ -57,16 +57,16 @@ def getNode(uuid, exit=True):
 
 
 @task
-def setRootPassword(uuid, rootPassword=None, node=None):
+def set_root_password(uuid, rootPassword=None, node=None):
     """Change the root password on a cloud server by UUID"""
     if not node:
-        node = getNode(uuid)
+        node = get_node(uuid)
     if not rootPassword:
         rootPassword = getpass.getpass(
             "Choose a root password for the new server: ")
-    conn = cloudConnect()
+    conn = cloud_connect()
     conn.ex_set_password(node, rootPassword)
-    while getNode(uuid).state != 0:
+    while get_node(uuid).state != 0:
         util.dot()
 
 
@@ -74,12 +74,12 @@ def setRootPassword(uuid, rootPassword=None, node=None):
 def status(conn=None):
     """Show status of cloud servers"""
     if not conn:
-        conn = cloudConnect()
+        conn = cloud_connect()
     [out(n) for n in conn.list_nodes()]
 
 
 @task
 def destroy(uuid):
     """Permanently delete a cloud server instance by UUID"""
-    getNode(uuid).destroy()
+    get_node(uuid).destroy()
     out("Node %s destroyed" % uuid)

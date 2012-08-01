@@ -1,6 +1,6 @@
 from fabric.api import env
 from fabric.api import task
-from util import printJSON
+from util import pretty_json
 import copy
 import json
 
@@ -9,7 +9,7 @@ serverConf = None
 
 
 ########## server configuration ##########
-def getServerConf(path=SERVER_CONF_PATH):
+def read(path=SERVER_CONF_PATH):
     global serverConf
     if serverConf:
         return serverConf
@@ -18,17 +18,17 @@ def getServerConf(path=SERVER_CONF_PATH):
     return serverConf
 
 
-def setServerConf(conf, path=SERVER_CONF_PATH):
+def write(conf, path=SERVER_CONF_PATH):
     conf = copy.copy(conf)
     for key, value in conf.iteritems():
         if "label" in conf[key]:
             del(conf[key]["label"])
     with open(path, "wb") as confFile:
-        confFile.write(printJSON(conf))
+        confFile.write(pretty_json(conf))
 
 
-def getServerProperty(name, property):
-    serverConf = getServerConf()
+def get_property(name, property):
+    serverConf = read()
     value = serverConf.get(name, {}).get(property)
     if value is None:
         exit("Could not find server {name} in {confPath}".format(
@@ -36,11 +36,11 @@ def getServerProperty(name, property):
     return value
 
 
-def serverTask(name):
-    def serverTask():
-        env.server = getServerConf()[name]
+def server_task(name):
+    def task_func():
+        env.server = read()[name]
         env.server["label"] = name
         env.hosts.append(env.server["hostname"])
-    serverTask.__name__ = str(name)
-    serverTask.__doc__ = "Deploy to {}".format(name)
-    return task(serverTask)
+    task_func.__name__ = str(name)
+    task_func.__doc__ = "Use target server {}".format(name)
+    return task(task_func)

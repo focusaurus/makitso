@@ -37,18 +37,18 @@ def exit(message, exitCode=0):
     sys.exit(exitCode)
 
 
-def prettyJSON(obj, indent=2):
+def pretty_json(obj, indent=2):
     pretty = json.dumps(obj, sort_keys=True, indent=indent)
     return TRAILING_WHITESPACE.sub("", pretty)
 
 
-def printJSON(obj, indent=2):
-    pretty = prettyJSON(obj, indent)
+def print_json(obj, indent=2):
+    pretty = pretty_json(obj, indent)
     print(pretty)
     return pretty
 
 
-def getSSHKey(keyPath="~/.ssh/id_rsa.pub"):
+def get_ssh_key(keyPath="~/.ssh/id_rsa.pub"):
     keyPath = os.path.expanduser(keyPath)
     if os.path.exists(keyPath) and not os.path.isdir(keyPath):
         with open(keyPath) as inFile:
@@ -72,7 +72,7 @@ find . -type d -print0 | xargs -0 chmod %(dirMode)s
 
 
 #http://www.5dollarwhitebox.org/drupal/node/84
-def humanizeBytes(bytes):
+def humanize_bytes(bytes):
     bytes = float(bytes)
     if bytes >= 1024 ** 4:
         terabytes = bytes / 1024 ** 4

@@ -2,7 +2,7 @@ import os
 import string
 
 
-def makeUserScript(login, sshKey=None):
+def make_user_script(login, sshKey=None):
     template = """adduser --disabled-password --quiet --gecos '' --home /home/${login} ${login}
 addgroup ${login} sudo
 """
@@ -21,7 +21,7 @@ chown ${login}:${login} .ssh/authorized_keys
         {"login": login, "sshKey": sshKey})
 
 
-def makeUpstartScript(upstartPath):
+def make_upstart_script(upstartPath):
     confName = os.path.basename(upstartPath)
     jobName = os.path.splitext(confName)[0]
     with open(upstartPath) as jobFile:
