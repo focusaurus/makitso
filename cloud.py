@@ -14,14 +14,14 @@ from makitso.util import out
 import libcloud.security
 import requests
 
-API_KEY = None
-USERNAME = None
+api_key = None
+username = None
 
 
 def cloud_connect():
     """Prompt for credentials if needed and return cloud driver"""
-    global API_KEY
-    global USERNAME
+    global api_key
+    global username
     cert_path = os.path.join("python", "cacert.pem")
     if not os.path.exists(cert_path):
         out("Installing CA Certificates for Cloud APIs")
@@ -32,12 +32,12 @@ def cloud_connect():
             cert_file.write(request.content)
     libcloud.security.VERIFY_SSL_CERT = True
     libcloud.security.CA_CERTS_PATH.append(cert_path)
-    if not USERNAME:
-        USERNAME = raw_input("RackSpace Username: ")
-    if not API_KEY:
-        API_KEY = getpass.getpass("RackSpace API Key: ")
+    if not username:
+        username = raw_input("RackSpace Username: ")
+    if not api_key:
+        api_key = getpass.getpass("RackSpace API Key: ")
     Driver = get_driver(Provider.RACKSPACE)
-    return Driver(USERNAME, API_KEY)
+    return Driver(username, api_key)
 
 
 def choose_cloud_option(listFunc, regex, name):
