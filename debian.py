@@ -1,8 +1,10 @@
+"""Utilities specific to Debian/Ubuntu Linux systems"""
 import os
 import string
 
 
 def make_user_script(login, ssh_key=None):
+    """Generate shell script to add an OS user"""
     template = """adduser --disabled-password --quiet --gecos '' --home /home/${login} ${login}
 addgroup ${login} sudo
 """
@@ -22,6 +24,10 @@ chown ${login}:${login} .ssh/authorized_keys
 
 
 def make_upstart_script(upstart_path):
+    """Generate a script to install and start and upstart job
+
+    upstart_path -- filesystem path to an upstart configuration file
+    """
     conf_name = os.path.basename(upstart_path)
     job_name = os.path.splitext(conf_name)[0]
     with open(upstart_path) as job_file:

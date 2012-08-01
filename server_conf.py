@@ -1,3 +1,4 @@
+"""This module manages a simple JSON configuration file for server metadata. """
 import copy
 import json
 
@@ -12,6 +13,7 @@ server_conf = None
 
 ########## server configuration ##########
 def read(path=SERVER_CONF_PATH):
+    """Read the configuration file and return data as a dict"""
     global server_conf
     if server_conf:
         return server_conf
@@ -21,6 +23,7 @@ def read(path=SERVER_CONF_PATH):
 
 
 def write(conf, path=SERVER_CONF_PATH):
+    """Write updated configuration data to the configuration file"""
     conf = copy.copy(conf)
     for key, value in conf.iteritems():
         if "label" in conf[key]:
@@ -30,6 +33,7 @@ def write(conf, path=SERVER_CONF_PATH):
 
 
 def get_property(name, property):
+    """Get a specific property value from a server's configuration by name"""
     server_conf = read()
     value = server_conf.get(name, {}).get(property)
     if value is None:
@@ -39,6 +43,14 @@ def get_property(name, property):
 
 
 def server_task(name):
+    """Generate a dynamic Fabric task function to set a server as the host
+
+    if you call:
+        server_task("production")
+    a Fabric task named "production" will be generated and when specified
+    on the command line, env.hosts will have the production server
+    (as identified in the server configuration file) added
+    """
     def task_func():
         env.server = read()[name]
         env.server["label"] = name

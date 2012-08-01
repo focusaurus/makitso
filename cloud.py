@@ -19,6 +19,7 @@ USERNAME = None
 
 
 def cloud_connect():
+    """Prompt for credentials if needed and return cloud driver"""
     global API_KEY
     global USERNAME
     cert_path = os.path.join("python", "cacert.pem")
@@ -40,6 +41,12 @@ def cloud_connect():
 
 
 def choose_cloud_option(listFunc, regex, name):
+    """Select an option from a cloud API response
+
+    listFunc -- a function that will return data objects from a cloud API
+    regex -- expression to test for
+    name -- name of type of object (Image, Flavor, etc) for error message
+    """
     item = [o for o in listFunc() if regex.match(o.name)]
     if len(item) != 1:
         exit("Could not find exactly one %s matching %s" %
@@ -48,6 +55,11 @@ def choose_cloud_option(listFunc, regex, name):
 
 
 def get_node(uuid, exit=True):
+    """Get a cloud node by UUID
+
+    Keyword arguments:
+    exit -- exit the program if the node is not found (default True)
+    """
     conn = cloud_connect()
     matches = [node for node in conn.list_nodes() if node.uuid == uuid]
     if len(matches) == 1:
