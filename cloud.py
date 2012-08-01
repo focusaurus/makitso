@@ -3,16 +3,16 @@
 from fabric.api import task
 from libcloud.compute.providers import get_driver
 from libcloud.compute.types import Provider
-from util import EC_DATA
-from util import EC_NETWORK
-from util import EC_SERVICE
-from util import exit
-from util import out
+from makitso import util
+from makitso.util import EC_DATA
+from makitso.util import EC_NETWORK
+from makitso.util import EC_SERVICE
+from makitso.util import exit
+from makitso.util import out
 import getpass
 import libcloud.security
 import os
 import requests
-import util
 
 API_KEY = None
 USERNAME = None

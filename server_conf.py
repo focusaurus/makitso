@@ -1,6 +1,6 @@
 from fabric.api import env
 from fabric.api import task
-from util import pretty_json
+from makitso.util import pretty_json
 import copy
 import json
 
