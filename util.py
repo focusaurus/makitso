@@ -73,12 +73,14 @@ def script(text, run=run, name=None):
     run -- either Fabric's run or sudo function
     name -- descriptive name for logging output
     """
-    temp_path = "./fabric_script_%s.sh" % time.strftime("%Y%m%d.%H%M%S")
-    script_io = StringIO(unicode(text))
+    temp_path = "~/.fabric_script_%s.sh" % time.strftime("%Y%m%d.%H%M%S")
+    script_io = StringIO.StringIO(unicode(text))
     script_io.name = name or temp_path
-    put(script_io, temp_path, mode=500)
+    with hide("running"):
+        put(script_io, temp_path, mode=0500)
     run(temp_path)
-    run("rm '%(temp_path)s'" % locals())
+    with hide("running"):
+        run("rm -f %(temp_path)s" % locals())
 
 
 def permissions(owner, file_mode=440, dir_mode=550):
