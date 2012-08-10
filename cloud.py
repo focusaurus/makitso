@@ -1,45 +1,52 @@
 """Cloud server manipulation"""
+import getpass
+import os
 
 from fabric.api import task
 from libcloud.compute.providers import get_driver
 from libcloud.compute.types import Provider
-from util import EC_DATA
-from util import EC_NETWORK
-from util import EC_SERVICE
-from util import exit
-from util import out
-import getpass
+from makitso import util
+from makitso.util import EC_DATA
+from makitso.util import EC_NETWORK
+from makitso.util import EC_SERVICE
+from makitso.util import exit
+from makitso.util import out
 import libcloud.security
-import os
 import requests
-import util
 
-API_KEY = None
-USERNAME = None
+api_key = None
+username = None
 
 
-def cloudConnect():
-    global API_KEY
-    global USERNAME
-    certPath = os.path.join("python", "cacert.pem")
-    if not os.path.exists(certPath):
+def cloud_connect():
+    """Prompt for credentials if needed and return cloud driver"""
+    global api_key
+    global username
+    cert_path = os.path.join("python", "cacert.pem")
+    if not os.path.exists(cert_path):
         out("Installing CA Certificates for Cloud APIs")
         request = requests.get("http://curl.haxx.se/ca/cacert.pem")
         if request.status_code > 299:
             exit("Could not download CA Certs from %s", EC_NETWORK)
-        with open(certPath, "wb") as certFile:
-            certFile.write(request.content)
+        with open(cert_path, "wb") as cert_file:
+            cert_file.write(request.content)
     libcloud.security.VERIFY_SSL_CERT = True
-    libcloud.security.CA_CERTS_PATH.append(certPath)
-    if not USERNAME:
-        USERNAME = raw_input("RackSpace Username: ")
-    if not API_KEY:
-        API_KEY = getpass.getpass("RackSpace API Key: ")
+    libcloud.security.CA_CERTS_PATH.append(cert_path)
+    if not username:
+        username = raw_input("RackSpace Username: ")
+    if not api_key:
+        api_key = getpass.getpass("RackSpace API Key: ")
     Driver = get_driver(Provider.RACKSPACE)
-    return Driver(USERNAME, API_KEY)
+    return Driver(username, api_key)
 
 
-def chooseCloudOption(listFunc, regex, name):
+def choose_cloud_option(listFunc, regex, name):
+    """Select an option from a cloud API response
+
+    listFunc -- a function that will return data objects from a cloud API
+    regex -- expression to test for
+    name -- name of type of object (Image, Flavor, etc) for error message
+    """
     item = [o for o in listFunc() if regex.match(o.name)]
     if len(item) != 1:
         exit("Could not find exactly one %s matching %s" %
@@ -47,8 +54,13 @@ def chooseCloudOption(listFunc, regex, name):
     return item[0]
 
 
-def getNode(uuid, exit=True):
-    conn = cloudConnect()
+def get_node(uuid, exit=True):
+    """Get a cloud node by UUID
+
+    Keyword arguments:
+    exit -- exit the program if the node is not found (default True)
+    """
+    conn = cloud_connect()
     matches = [node for node in conn.list_nodes() if node.uuid == uuid]
     if len(matches) == 1:
         return matches[0]
@@ -57,16 +69,16 @@ def getNode(uuid, exit=True):
 
 
 @task
-def setRootPassword(uuid, rootPassword=None, node=None):
+def set_root_password(uuid, rootPassword=None, node=None):
     """Change the root password on a cloud server by UUID"""
     if not node:
-        node = getNode(uuid)
+        node = get_node(uuid)
     if not rootPassword:
         rootPassword = getpass.getpass(
             "Choose a root password for the new server: ")
-    conn = cloudConnect()
+    conn = cloud_connect()
     conn.ex_set_password(node, rootPassword)
-    while getNode(uuid).state != 0:
+    while get_node(uuid).state != 0:
         util.dot()
 
 
@@ -74,12 +86,12 @@ def setRootPassword(uuid, rootPassword=None, node=None):
 def status(conn=None):
     """Show status of cloud servers"""
     if not conn:
-        conn = cloudConnect()
+        conn = cloud_connect()
     [out(n) for n in conn.list_nodes()]
 
 
 @task
 def destroy(uuid):
     """Permanently delete a cloud server instance by UUID"""
-    getNode(uuid).destroy()
+    get_node(uuid).destroy()
     out("Node %s destroyed" % uuid)
