@@ -6,8 +6,7 @@
 #installation too much
 
 cd $(dirname "${0}")
-pwd #@bug
-PYTHON_ROOT="./python"
+PYTHON_ROOT="../python"
 FAB_PATH="${PYTHON_ROOT}/bin/fab"
 
 ./scripts/python/install_fabric.sh "${PYTHON_ROOT}"
