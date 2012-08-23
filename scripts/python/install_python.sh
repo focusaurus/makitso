@@ -11,6 +11,9 @@ install_python() {
   curl --silent \
     "https://raw.github.com/pypa/virtualenv/${VERSION}/virtualenv.py" | \
   python - --distribute "${1}"
+  if [ -e distribute-*.tar.gz ]; then
+    rm distribute-*.tar.gz
+  fi
 }
 
 if [ -x "${PYTHON_ROOT}/bin/python" ]; then
