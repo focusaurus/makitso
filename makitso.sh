@@ -6,6 +6,7 @@
 #installation too much
 
 cd $(dirname "${0}")
+pwd #@bug
 PYTHON_ROOT="./python"
 FAB_PATH="${PYTHON_ROOT}/bin/fab"
 
@@ -16,6 +17,6 @@ case "${1}" in
     exec "${FAB_PATH}" --list
   ;;
   *)
-    exec "${FAB_PATH}" "${@}"
+    exec "${FAB_PATH}" --fabfile=../fabfile.py "${@}"
   ;;
 esac
