@@ -16,7 +16,6 @@ case "${1}" in
     exec "${FAB_PATH}" --list
   ;;
   *)
-    ensure_fab
     exec "${FAB_PATH}" "${@}"
   ;;
 esac
