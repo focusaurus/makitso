@@ -8,6 +8,7 @@ from io import StringIO
 
 from fabric.api import put
 from fabric.api import run
+from fabric.context_managers import hide
 import fabric.utils
 
 EC_NETWORK = 10
@@ -74,7 +75,7 @@ def script(text, run=run, name=None):
     name -- descriptive name for logging output
     """
     temp_path = "~/.fabric_script_%s.sh" % time.strftime("%Y%m%d.%H%M%S")
-    script_io = StringIO.StringIO(unicode(text))
+    script_io = StringIO(unicode(text))
     script_io.name = name or temp_path
     with hide("running"):
         put(script_io, temp_path, mode=0500)

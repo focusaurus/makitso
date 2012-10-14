@@ -22,7 +22,7 @@ def cloud_connect():
     """Prompt for credentials if needed and return cloud driver"""
     global api_key
     global username
-    cert_path = os.path.join("python", "cacert.pem")
+    cert_path = os.path.join(os.path.dirname(__file__), "python", "cacert.pem")
     if not os.path.exists(cert_path):
         out("Installing CA Certificates for Cloud APIs")
         request = requests.get("http://curl.haxx.se/ca/cacert.pem")
