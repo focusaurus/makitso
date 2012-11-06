@@ -2,14 +2,13 @@
 
 Utilities around server provisioning and install/config built upon the [Fabric](http://fabfile.org) [Python](http://python.org) framework.
 
-The `do` shell script wrapper is the entry point to this library, so all commands take the form:
+The `makitso.sh` shell script wrapper is the entry point to this library. It is designed to be symlinked into the parent directory of the makitso submodule. You can call the symlink whatever you want. I like calling it "do", but use whatever name you like. So all commands take the form:
 
     ./do <command>...
 
 Note that `do` should be invoked as "./do" or your shell will think you mean the "do" shell keyword used in "for"/"while" loops. The `do` script will ensure the prerequisites are installed, which involves:
 
 * A python virtualenv in `./python`
-
 
 #Dependencies
 
@@ -26,9 +25,9 @@ Note that `do` should be invoked as "./do" or your shell will think you mean the
 
     git submodule add git@github.com:focusaurus/makitso.git
 
-* Symlink the `do` script
+* Symlink the `do` script (again you can name it whatever you like)
 
-    ln -s makitso/do .
+    ln -s makitso/makitso.sh ./do
 
 * Define your `fabfile.py` in the root of your project
 * Make use of the `makitso` package and the helper modules therein
@@ -45,4 +44,3 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 ```
-
