@@ -4,7 +4,7 @@
 #This enables a developer to just clone the git repo, read the README.md
 #and start issuing "do" commands without futzing with manual prerequisite
 #installation too much
-THIS_FILE=$(readlink "${0}") || /usr/bin/true
+THIS_FILE=$(readlink "${0}") || true
 [ -z "${THIS_FILE}" ] && THIS_FILE="${0}"
 cd $(dirname "${THIS_FILE}")
 PYTHON_ROOT="../python"
