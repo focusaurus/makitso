@@ -33,6 +33,8 @@ Note that `do` should be invoked as "./do" or your shell will think you mean the
 * Define your `fabfile.py` in the root of your project
 * Make use of the `makitso` package and the helper modules therein
 
+* Let's test mirroring to github
+
 #License
 
 ```
