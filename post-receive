@@ -2,3 +2,5 @@
 #http://interrobeng.com/2013/08/25/speed-up-git-5x-to-50x/
 nohup git push --mirror \
   ssh://git@github.com/focusaurus/makitso.git &
+cd ~/projects/makitso
+git pull
