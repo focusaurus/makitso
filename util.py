@@ -11,6 +11,25 @@ from fabric.api import run
 from fabric.context_managers import hide
 import fabric.utils
 
+
+
+from fabric.context_managers import (settings, char_buffered, hide,
+    quiet as quiet_manager, warn_only as warn_only_manager)
+from fabric.io import output_loop, input_loop
+from fabric.network import needs_host, ssh, ssh_config
+from fabric.sftp import SFTP
+from fabric.state import env, connections, output, win32, default_channel
+from fabric.thread_handling import ThreadHandler
+from fabric.utils import (
+    abort,
+    error,
+    handle_prompt_abort,
+    indent,
+    _pty_size,
+    warn,
+)
+
+
 EC_NETWORK = 10
 EC_SERVICE = 20
 EC_DATA = 30
@@ -64,7 +83,7 @@ def get_ssh_key(key_path="~/.ssh/id_rsa.pub"):
             return in_file.read()
 
 
-def script(text, run=run, name=None):
+def script1(text, run=run, name=None):
     """Execute a shell script on the remote host
 
     Arguments:
@@ -83,6 +102,137 @@ def script(text, run=run, name=None):
     with hide("running"):
         run("rm -f %(temp_path)s" % locals())
 
+
+def _execute(channel, text, pty=True, combine_stderr=None,
+    invoke_shell=False, stdout=None, stderr=None):
+    """
+    Execute ``command`` over ``channel``.
+
+    ``pty`` controls whether a pseudo-terminal is created.
+
+    ``combine_stderr`` controls whether we call ``channel.set_combine_stderr``.
+    By default, the global setting for this behavior (:ref:`env.combine_stderr
+    <combine-stderr>`) is consulted, but you may specify ``True`` or ``False``
+    here to override it.
+
+    ``invoke_shell`` controls whether we use ``exec_command`` or
+    ``invoke_shell`` (plus a handful of other things, such as always forcing a
+    pty.)
+
+    Returns a three-tuple of (``stdout``, ``stderr``, ``status``), where
+    ``stdout``/``stderr`` are captured output strings and ``status`` is the
+    program's return code, if applicable.
+    """
+    # stdout/stderr redirection
+    stdout = stdout or sys.stdout
+    stderr = stderr or sys.stderr
+
+    with char_buffered(sys.stdin):
+        # Combine stdout and stderr to get around oddball mixing issues
+        if combine_stderr is None:
+            combine_stderr = env.combine_stderr
+        channel.set_combine_stderr(combine_stderr)
+
+        # Assume pty use, and allow overriding of this either via kwarg or env
+        # var.  (invoke_shell always wants a pty no matter what.)
+        using_pty = True
+        if not invoke_shell and (not pty or not env.always_use_pty):
+            using_pty = False
+        # Request pty with size params (default to 80x24, obtain real
+        # parameters if on POSIX platform)
+        if using_pty:
+            rows, cols = _pty_size()
+            channel.get_pty(width=cols, height=rows)
+
+        # Use SSH agent forwarding from 'ssh' if enabled by user
+        config_agent = ssh_config().get('forwardagent', 'no').lower() == 'yes'
+        forward = None
+        if env.forward_agent or config_agent:
+            forward = ssh.agent.AgentRequestHandler(channel)
+
+        # Kick off remote command
+        if invoke_shell:
+            channel.invoke_shell()
+            if command:
+                channel.sendall(command + "\n")
+        else:
+            channel.exec_command("sh -s\n")
+
+        # Init stdout, stderr capturing. Must use lists instead of strings as
+        # strings are immutable and we're using these as pass-by-reference
+        stdout_buf, stderr_buf = [], []
+        if invoke_shell:
+            stdout_buf = stderr_buf = None
+        channel.sendall(text)
+        workers = (
+            ThreadHandler('out', output_loop, channel, "recv",
+                capture=stdout_buf, stream=stdout),
+            ThreadHandler('err', output_loop, channel, "recv_stderr",
+                capture=stderr_buf, stream=stderr),
+            ThreadHandler('in', input_loop, channel, using_pty)
+        )
+
+        while True:
+            if channel.exit_status_ready():
+                break
+            else:
+                for worker in workers:
+                    e = worker.exception
+                    if e:
+                        raise e[0], e[1], e[2]
+            time.sleep(ssh.io_sleep)
+
+        # Obtain exit code of remote program now that we're done.
+        status = channel.recv_exit_status()
+
+        # Wait for threads to exit so we aren't left with stale threads
+        for worker in workers:
+            worker.thread.join()
+
+        # Close channel
+        channel.close()
+        # Close any agent forward proxies
+        if forward is not None:
+            forward.close()
+
+        # Update stdout/stderr with captured values if applicable
+        if not invoke_shell:
+            stdout_buf = ''.join(stdout_buf).strip()
+            stderr_buf = ''.join(stderr_buf).strip()
+
+        # Tie off "loose" output by printing a newline. Helps to ensure any
+        # following print()s aren't on the same line as a trailing line prefix
+        # or similar. However, don't add an extra newline if we've already
+        # ended up with one, as that adds a entire blank line instead.
+        if output.running \
+            and (output.stdout and stdout_buf and not stdout_buf.endswith("\n")) \
+            or (output.stderr and stderr_buf and not stderr_buf.endswith("\n")):
+            print("")
+
+        return stdout_buf, stderr_buf, status
+
+@host("127.0.0.1")
+def script(text, run=run, name=None):
+    """Execute a shell script on the remote host
+
+    Arguments:
+    text -- script code
+
+    Keyword arguments:
+    run -- either Fabric's run or sudo function
+    name -- descriptive name for logging output
+    """
+    _execute(default_channel(), text)
+    # from ssh.client import SSHClient
+    # client = SSHClient()
+    # client.load_system_host_keys()
+    # client.connect(env.host_string)
+    # stdin, stdout, stderr = client.exec_command("sh -s")
+    # stdin.write(text)
+    # stdin.channel.shutdown_write()
+    # sys.std(stdout.read())
+    # print(stderr.read())
+    # client.close()
 
 def permissions(owner, file_mode=440, dir_mode=550):
     """Return a shell script snippet to setup owner & permissions"""
