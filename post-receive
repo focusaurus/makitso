@@ -3,4 +3,4 @@
 nohup git push --mirror \
   ssh://git@github.com/focusaurus/makitso.git &>/dev/null &
 cd ~/projects/makitso
-git pull
+nohup git pull &>/dev/null &
