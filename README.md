@@ -14,6 +14,7 @@ Note that `do` should be invoked as "./do" or your shell will think you mean the
 
 * a modern bourne-ish shell. Bash 4 or zsh 4 or newer should work fine
 * [Python](http://python.org) 2.6 or newer
+* A python development environment (needed to compile native C portions for some of the Fabric packages), such as the python-dev Ubuntu/Debian package
 * [virtualenv](http://pypi.python.org/pypi/virtualenv/) 1.7 or newer
     * makitso will automatically download virtualenv.py as needed
 * [Fabric](http://fabfile.org) 1.4 or newer
