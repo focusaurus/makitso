@@ -2,6 +2,3 @@
 #http://interrobeng.com/2013/08/25/speed-up-git-5x-to-50x/
 nohup git push --mirror \
   ssh://git@github.com/focusaurus/makitso.git &>/dev/null &
-cd ~/projects/makitso
-echo test post-receive voodoo 3
-nohup git pull &>/dev/null &
