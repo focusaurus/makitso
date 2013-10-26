@@ -3,5 +3,5 @@
 nohup git push --mirror \
   ssh://git@github.com/focusaurus/makitso.git &>/dev/null &
 cd ~/projects/makitso
-echo test post-receive voodoo 1
+echo test post-receive voodoo 2
 nohup git pull &>/dev/null &
