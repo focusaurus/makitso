@@ -7,7 +7,7 @@ shift
 
 install_node() {
     local PREFIX=${1-node}
-    local VERSION=${2-0.8.14}
+    local VERSION=${2-0.10.21}
     local PLATFORM=$(uname | tr A-Z a-z)
     local ARCH=x64
     case $(uname -p) in
