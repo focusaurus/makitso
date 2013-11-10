@@ -1,0 +1,8 @@
+#!/bin/bash
+for DIR in $@; do
+  if [[ -e "${DIR}" ][ && [[ ! -d "${DIR}" ]]; then
+    echo "ERROR: path ${DIR} exists but is not a directory" 1>&2
+    exit 5
+  fi
+  mkdir -p "${DIR}"
+done

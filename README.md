@@ -1,6 +1,6 @@
 #Makitso
 
-Utilities around server provisioning and install/config built upon the [Fabric](http://fabfile.org) [Python](http://python.org) framework.
+This project started as some automation utilites built upon the [Fabric](http://fabfile.org) [Python](http://python.org) framework. But now it is transitioning away from fabric toward [Ansible](http://www.ansibleworks.com/) for application deployment and configuration management and leaving makitso as utilities for bootstrapping scripting languages and development automation stuff.
 
 The `makitso.sh` shell script wrapper is the entry point to this library. It is designed to be symlinked into the parent directory of the makitso submodule. You can call the symlink whatever you want. I like calling it "do", but use whatever name you like. So all commands take the form:
 
@@ -24,7 +24,7 @@ Note that `do` should be invoked as "./do" or your shell will think you mean the
 
 * Install makitso as a git submodule
 
-    git submodule add git@github.com:focusaurus/makitso.git
+    git submodule add https://github.com/focusaurus/makitso.git
 
 * Symlink the `do` script (again you can name it whatever you like)
 
