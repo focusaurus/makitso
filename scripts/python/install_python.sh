@@ -1,24 +1,29 @@
-#!/bin/sh
-PYTHON_ROOT="${1}"
-if [ -z "${PYTHON_ROOT}" ]; then
-  PYTHON_ROOT=$(dirname "${0}/../../../python")
-fi
+#!/bin/bash
 
 install_python() {
-  #This is the 1.7.2 release of virtualenv
-  local VERSION="${2-c80ab42b6d3a345d71c39c8bdab197015ad3ed4b}"
   echo "Building python virtualenv"
+  local virtualenv_version="1.10.1"
+  local archive="virtualenv-${virtualenv_version}.tar.gz"
+  local directory="/tmp/virtualenv-${virtualenv_version}"
   curl --silent \
-    "https://raw.github.com/pypa/virtualenv/${VERSION}/virtualenv.py" | \
-  python - --distribute "${1}"
-  if [ -e distribute-*.tar.gz ]; then
-    rm distribute-*.tar.gz
-  fi
+    "https://pypi.python.org/packages/source/v/virtualenv/${archive}" \
+    > "/tmp/${archive}"
+  mkdir -p "${python_root}"
+  tar --directory "${python_root}" --extract --gzip --file "/tmp/${archive}"
+  rm "/tmp/${archive}"
+  mv "${python_root}/virtualenv-${virtualenv_version}" "${python_root}/virtualenv"
+  python "${python_root}/virtualenv/virtualenv.py" "${python_root}"
+  python "${python_root}/virtualenv/virtualenv.py" --relocatable "${python_root}"
 }
 
-if [ -x "${PYTHON_ROOT}/bin/python" ]; then
+python_root="${1}"
+if [[ -z "${python_root}" ]]; then
+  python_root=$(dirname "${0}/../../../python")
+fi
+
+if [[ -x "${python_root}/bin/python" ]]; then
     #all good
     exit 0
 fi
-echo "python not installed in ${PYTHON_ROOT}, installing..."
-install_python "${PYTHON_ROOT}"
+echo "python not installed in ${python_root}, installing..."
+install_python "${python_root}"
